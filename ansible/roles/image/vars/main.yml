@@ -1,0 +1,7 @@
+---
+# vars file
+registry: "{{ registry_url }}"
+username: "{{ registry_user }}"
+password: "{{ registry_password }}"
+#{{ ansible_facts.eth0.ipv4.address }}
+#{{ hostvars['test.example.com']['ansible_facts']['distribution'] }}

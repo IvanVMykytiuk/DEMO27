@@ -1,0 +1,79 @@
+---
+- hosts: apps
+  become: true
+  vars:
+    docker_network: imnet
+ #  pip_package: python-pip
+ #  pip_executable: "{{ 'pip3' if pip_package.startswith('python3') else 'pip' }}"
+ #  pip_install_packages: ["docker-py"]
+    
+  tasks:
+  - name: Running the shipping container
+    docker_container:
+      name: shipping
+      image: imykytyuk/shipping:latest
+      network_mode: "{{ docker_network }}"
+      state: started
+      pull: yes
+
+#  - name: Docker Login
+#    docker_login:
+#      registry: https://eu.gcr.io
+#      username: _json_key
+#      debug: true
+#      password: " {{ lookup('file', '~/.config/gcloud/credentials/terraform.json')}}"
+
+  - name: Running the queue-master container
+    docker_container:
+      name: queue-master
+      image: us.gcr.io/terraformproject-253815/queue-master:latest
+      network_mode: "{{ docker_network }}"
+      state: started
+      pull: yes
+
+  - name: Running the rabbitmq container
+    docker_container:
+      name: rabbitmq
+      image: rabbitmq:3.6.8
+      network_mode: "{{ docker_network }}"
+      state: started
+      
+
+
+
+#---
+#- hosts: apps
+#  become: true
+#  vars:
+#    docker_network: imnet
+# #  pip_package: python-pip
+# #  pip_executable: "{{ 'pip3' if pip_package.startswith('python3') else 'pip' }}"
+# #  pip_install_packages: ["docker-py"]
+#    
+#  tasks:
+#  - name: Running the shipping container
+#    docker_container:
+#      name: shipping
+#      image: imykytyuk/shipping:latest
+#      network_mode: "{{ docker_network }}"
+#      state: running
+#      pull: yes
+#      tags:
+#      - container_create
+#
+#  - name: Docker Login
+#    docker_login:
+#      registry: https://eu.gcr.io
+#      username: _json_key
+#      debug: true
+#      password: " {{ lookup('file', '~/.config/gcloud/credentials/terraform.json')}}"
+#
+#  - name: Running the queue-master container
+#    docker_container:
+#      name: queue-master
+#      image: us.gcr.io/terraformproject-253815/queue-master:latest
+#      network_mode: "{{ docker_network }}"
+#      state: running
+#      pull: yes
+#      tags:
+#      - container_create

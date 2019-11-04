@@ -1,0 +1,141 @@
+---
+- hosts: dockerhost
+  become: true
+  vars:
+    pip_package: python-pip
+    pip_executable: "{{ 'pip3' if pip_package.startswith('python3') else 'pip' }}"
+    pip_install_packages: ["docker-py"]
+    
+    
+
+  roles:
+  - role: docker
+  - role: pip_install_packages
+      
+- hosts: apps
+  become: true
+  tasks:
+  - name: create app directories
+    file:
+      path: "{{ item }}"
+      state: directory
+      owner: jenkins
+      group: jenkins
+      mode: 0775
+    loop:
+      - /opt/carts
+      - /opt/frontend
+      - /opt/catalogue
+      - /opt/user
+      - /opt/order
+      - /opt/payment
+
+  - pause:  minutes=3
+  
+  - name: Check if Swarm has already been Initialized
+    shell: docker node ls
+    register: swarm_status
+    ignore_errors: true
+ 
+  - name: Initialize Docker Swarm
+    shell: >
+        docker swarm init
+        --advertise-addr={{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2377
+    when: swarm_status.rc != 0
+    run_once: true
+    
+
+  - name: Get the Manager join-token
+    shell: docker swarm join-token --quiet manager
+    register: manager_token
+
+  - name: Get infos on network
+    docker_network_info:
+      name: imnet
+    register: result 
+       
+  - name: Add overlay network imnet
+    shell: docker network create -d overlay --attachable imnet
+    when: result.exists == False
+  #- name: "create overlay network"
+  #  docker_network:
+  #    name: imnet
+  #    driver: overlay
+  #    attachable: true
+
+- hosts: database
+  become: true
+  tasks:
+  - name: Check if Swarm is Already Initialized
+    shell: docker node ls
+    register: swarm_status
+    ignore_errors: true
+    
+
+  - name: Add Managers to the Swarm
+    shell: "docker swarm join --token {{ hostvars['apps']['manager_token']['stdout'] }} {{ hostvars['apps']['ansible_default_ipv4']['address'] }}:2377"
+    when: swarm_status.rc != 0
+     
+
+
+
+#- hosts: apps
+#  become: true
+#  tasks:
+
+  #- name: Check if Swarm has already been Initialized
+  #  shell: docker node ls
+  #  register: swarm_status
+  #  ignore_errors: true
+  #  tags: swarm
+
+  #- name: Init a new swarm with default parameters
+  #  docker_swarm:
+  #    state: present
+  #  tags: swarm
+
+  #- name: Initialize Docker Swarm
+  #  shell: >
+  #        docker swarm init
+  #        --advertise-addr={{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2377
+  #  when: swarm_status.rc != 0
+  #  run_once: true
+  #  tags: swarm
+
+#  - name: Get the Manager join-token
+#    shell: docker swarm join-token --quiet manager
+#    register: manager_token
+#    tags: swarm
+#
+#  - name: Add overlay network imnet
+#  #  shell: docker network create -d overlay --attachable imnet
+#    docker_network:
+#      name: imnet
+#      driver: overlay
+#      #driver_options:
+#      attachable: 'true'
+#    state: present 
+#    run_once: true 
+#
+#  #- name: Get the worker join-token
+#  #  shell: docker swarm join-token --quiet worker
+#  #  register: worker_token
+#  #  tags: swarm
+#
+#- hosts: database
+#  become: true
+#  tasks:
+#
+# #- name: Add Second Managers to the Swarm
+# #  shell: "docker swarm join --token {{ manager_token }} 10.156.15.102:2377"
+# #  when: swarm_status.rc != 0
+# #  tags: swarm
+#  
+#  - name: Add manager nodes
+#    docker_swarm:
+#      state: join
+#      advertise_addr: 10.156.15.102
+#      join_token:  "{{ manager_token.stdout }}" 
+#      remote_addrs: 10.156.15.102:2377
+#    when: swarm_status.rc != 0
+#    tags: swarm
