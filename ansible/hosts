@@ -1,13 +1,13 @@
 [dockerhost]
-apps
-database
+app
+db
 
 [app]
-apps
+app
 
 # Database server
 [db]
-database
+db
 
 # Group 'multi' with all servers
 [multi:children]

@@ -51,13 +51,13 @@ variable "ssh_key" {
 variable "instance_name" {
     type = list(string)
     description = "The ."
-    default = ["database", "apps"]    
+    default = ["db", "app"]    
 }
 
 variable "instance_ip" {
     type = list(string)
     description = "The ."
-    default = ["10.156.15.101", "10.156.15.102"]    
+    default = ["10.156.15.201", "10.156.15.202"]    
 }
 
 

@@ -1,0 +1,67 @@
+---
+- hosts: localhost
+
+  tasks:
+  - name: Git clone repo carts
+    git:
+      repo: 'https://github.com/microservices-demo/carts.git'
+      dest: /var/lib/jenkins/msrepo/carts
+      #clone: no
+      #update: no
+    tags: [ carts, debug ] 
+
+  - name: Git clone repo front-end
+    git:
+      repo: 'https://github.com/microservices-demo/front-end.git'
+      dest: /var/lib/jenkins/msrepo/front-end
+      #clone: no
+      #update: no
+    tags: [ front-end, debug ] 
+
+  - name: Git clone repo catalogue
+    git:
+      repo: 'https://github.com/microservices-demo/catalogue.git'
+      dest: /var/lib/jenkins/msrepo/catalogue
+      #clone: no
+      #update: no
+    tags: [ catalogue, debug ] 
+
+  - name: Git clone repo orders
+    git:
+      repo: 'https://github.com/microservices-demo/orders.git'
+      dest: /var/lib/jenkins/msrepo/orders
+      #clone: no
+      #update: no
+    tags: [ orders, debug ] 
+
+  - name: Git clone repo queue-master
+    git:
+      repo: 'https://github.com/microservices-demo/queue-master.git'
+      dest: /var/lib/jenkins/msrepo/queue-master
+      #clone: no
+      #update: no
+    tags: [ queue-master, debug ]
+
+  - name: Git clone repo shipping
+    git:
+      repo: 'https://github.com/microservices-demo/shipping.git'
+      dest: /var/lib/jenkins/msrepo/shipping
+      #clone: no
+      #update: no
+    tags: [ shipping, debug ] 
+  
+  - name: Git clone repo payment
+    git:
+      repo: 'https://github.com/microservices-demo/payment.git'
+      dest: /var/lib/jenkins/msrepo/payment
+      #clone: no
+      #update: no
+    tags: [ payment, debug ]
+
+  - name: Git clone repo user
+    git:
+      repo: 'https://github.com/microservices-demo/user.git'
+      dest: /var/lib/jenkins/msrepo/user
+      #clone: no
+      #update: no
+    tags: [ user, debug ]
