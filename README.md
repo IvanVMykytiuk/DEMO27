@@ -265,3 +265,58 @@ ars:
 
 - name: "execute  handlers"
   meta: flush_handlers
+
+  pipeline{
+
+agent { node { label 'test' } }
+options { skipDefaultCheckout() }
+
+parameters {
+    string(name: 'suiteFile', defaultValue: '', description: 'Suite File')
+}
+stages{
+
+    stage('Initialize'){
+
+        steps{
+
+          echo "${params.suiteFile}"
+
+        }
+    }
+ }
+ pipeline {
+    agent any
+    parameters {
+        string(name: 'PARAM1', description: 'Param 1?')
+        string(name: 'PARAM2', description: 'Param 2?')
+    }
+    stages {
+        stage('Example') {
+            steps {
+                echo "${params}"
+                script {
+                    def myparams = currentBuild.rawBuild.getAction(ParametersAction).getParameters()
+                    build job: 'downstream-pipeline-with-params', parameters: myparams
+                }    
+            }
+        }
+    }
+}
+service = 'microservice'
+echo "TESSSSSSSSTTT ${service}"
+build(job: "'${service}'", parameters: [string(name: 'ENVNAME', value: 'uat')])
+build(job: "${service}", parameters: [string(name: 'ENVNAME', value: 'uat')])
+
+if (env.BRANCH_NAME == 'master') {
+    build '../other-repo/master'
+}
+stage ('Starting ART job') {
+    build job: 'RunArtInTest', parameters: [[$class: 'StringParameterValue', name: 'systemname', value: systemname]]
+}
+build job: 'your-job-name', 
+    parameters: [
+        string(name: 'passed_build_number_param', value: String.valueOf(BUILD_NUMBER)),
+        string(name: 'complex_param', value: 'prefix-' + String.valueOf(BUILD_NUMBER))
+    ]
+

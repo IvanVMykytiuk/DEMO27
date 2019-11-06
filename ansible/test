@@ -1,8 +1,0 @@
-- name: Docker Login
-  docker_login:
-    registry: https://eu.gcr.io
-    username: _json_key
-    debug: true
-    password: "{{ lookup('file', '~/.config/gcloud/credentials/terraform.json')}}"
-
-    docker pull us.gcr.io/terraformproject-253815/queue-master@sha256:8b981979b8d9d904caee7589b7082bf074c346c40ce5d9ff000da2b09d0d2d2b

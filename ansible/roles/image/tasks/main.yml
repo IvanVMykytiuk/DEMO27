@@ -1,8 +1,0 @@
-#- name: Install yum utils
-#  yum:
-#    name: yum-utils
-#    state: latest
-# 
-#    append: yes
-    
-    
