@@ -57,7 +57,7 @@ variable "instance_name" {
 variable "instance_ip" {
     type = list(string)
     description = "The ."
-    default = ["10.156.15.101", "10.156.15.102"]    
+    default = ["10.128.0.101", "10.128.0.102"]    
 }
 
 

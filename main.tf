@@ -2,35 +2,35 @@ provider "google" {
   credentials = "/var/lib/jenkins/.config/gcloud/credentials/terraform.json"
   #credentials = "${file("C:/Users/imachine/.config/gcloud/credentials/terraform.json ")}"
   project     = "terraformproject-253815"
-  region      = "europe-west3"
-  zone        = "europe-west3-c"
+  region      = "us-central1"
+  zone        = "us-central1-f"
 }
 
 
-resource "google_compute_firewall" "allow-database" {  
-    name = "allow-database"
-    network =  "default"
-    allow {
-        protocol = "tcp"
-        ports = ["3306","27017","5432"]
-    }
-
-    source_ranges = ["10.0.0.0/8"]
-    target_tags = ["database"]
-}
-
-
-resource "google_compute_firewall" "allow-apps" {  
-    name = "allow-apps"
-    network =  "default"
-    allow {
-        protocol = "tcp"
-        ports = ["80","8080", "8081","8084","8083","8088"]
-    }
-
-    source_ranges = ["0.0.0.0/0"]
-    target_tags = ["apps"]
-}
+#resource "google_compute_firewall" "allow-database" {  
+#    name = "allow-database"
+#    network =  "default"
+#    allow {
+#        protocol = "tcp"
+#        ports = ["3306","27017","5432"]
+#    }
+#
+#    source_ranges = ["10.0.0.0/8"]
+#    target_tags = ["database"]
+#}
+#
+#
+#resource "google_compute_firewall" "allow-apps" {  
+#    name = "allow-apps"
+#    network =  "default"
+#    allow {
+#        protocol = "tcp"
+#        ports = ["80","8080", "8081","8084","8083","8088"]
+#    }
+#
+#    source_ranges = ["0.0.0.0/0"]
+#    target_tags = ["apps"]
+#}
 
 #resource "google_compute_address" "apps-ip" {
 #    name         = "apps-ip"
